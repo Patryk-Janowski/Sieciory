@@ -61,14 +61,20 @@ class Traceroute(ICMPLib):
                     break
     
     def printHeader(self, dest_addr, dest_name):
-        # Print the traceroute header
+        """
+        Wypisuje nagłówek programu
+        """
         print(f"Traceroute to {dest_name} ({dest_addr})")
         print(
             f"{'Hop':<5s}{'IP Address':<20s}{'Hostname':<50s}{'Time (ms)':<10s}"
         )
         print("-" * 90)
 
-    def traceroute(self, dest_name):
+    def execute(self, dest_name):
+        """
+        Wywołuje odpowiednie funkcje i prezentuje ich wyniki w odpowiedni sposób.
+        Przyjmuje adres docelowy jako argument.
+        """
         dest_addr = socket.gethostbyname(dest_name)
         self.printHeader(dest_addr, dest_name)
         for i, (addr, elapsed_time) in enumerate(self.tracerouteUtil(dest_addr)):
