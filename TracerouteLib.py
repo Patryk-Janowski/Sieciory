@@ -12,19 +12,10 @@ class Traceroute(ICMPLib):
         self.send_over_icmp = send_over_icmp
 
     def tracerouteUtil(self, dest_addr: str,) -> Generator[tuple[str, float], None, None]:
-        """Traceroute implementation using UDP packets.
-
-        Args:
-            dest_addr (str): The destination address.
-            MAX_HOPS (int, optional): The maximum number of hops.
-            Defaults to 64.
-            timeout (float, optional): The timeout for receiving packets.
-            Defaults to 2.
-
-        Yields:
-            Generator[tuple[str, float], None, None]: A generator that
-            yields the current address and elapsed time for each hop.
-
+        """
+        Implementacja funkcjonalności traceroute. W zależności od ustawienia zmiennej send_over_icmp korzysta z protokołu ICMP lub UDP.
+        Funkcja jak argument przyjmuje adres docelowy.
+        Zwraca generator zwracający obecny adres i upłynięty czas dla każdego węzła.
         """
         # ExitStack allows us to avoid multiple nested contextmanagers
         with ExitStack() as stack:
