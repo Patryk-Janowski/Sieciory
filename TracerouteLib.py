@@ -1,6 +1,5 @@
 from IcmpLib import ICMPLib
 import socket
-import sys
 import time
 from collections.abc import Generator
 from contextlib import ExitStack
