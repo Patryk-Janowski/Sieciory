@@ -17,49 +17,46 @@ class Traceroute(ICMPLib):
         Funkcja jak argument przyjmuje adres docelowy.
         Zwraca generator zwracający obecny adres i upłynięty czas dla każdego węzła.
         """
-        # ExitStack allows us to avoid multiple nested contextmanagers
+        # użycie ExitStack umożliwia ominięcie wielu zagnieżdzonych with
         with ExitStack() as stack:
-            # Create an ICMP socket connection for receiving packets
+            # stworzenie gniazda nasłuchującego do odbierania ICMP Echo Reply
             icmp_sock = stack.enter_context(self.getIcmpSocket())
 
             if not self.send_over_icmp:
-            # Create a UDP socket connection for sending packets
+            # Stworznenie gniazda UDP do wysyłania pakietów
                 tx = stack.enter_context(
                     socket.socket(
                         socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP
                     )
                 )
 
-            # Iterate over the TTL values
+            # Iterowanie po wartościach pola TTL
             for ttl in range(1, self.MAX_HOPS + 1):
-                # Set the TTL value in the sender socket
+                # Ustawianie wartości pola TTL w zależności od wybranego protokołu
                 if self.send_over_icmp:
                     self.setSockTTl(icmp_sock, ttl)
                     self.sendEchoRequest(icmp_sock, dest_addr)
                 else:
                     tx.setsockopt(socket.IPPROTO_IP, socket.IP_TTL, ttl)
                     tx.sendto(b"", (dest_addr, 33434))
+
+                # Obliczanie czasu dla węzła i wyciąganie adresu źródłowego z otrzymanego pakietu
                 try:
-                    # Start the timer
                     start_time = time.perf_counter_ns()
 
-                    # Receive the response packet and extract the source address
                     _, curr_addr = icmp_sock.recvfrom(512)
                     curr_addr = curr_addr[0]
 
-                    # Stop the timer and calculate the elapsed time
                     end_time = time.perf_counter_ns()
                     elapsed_time = (end_time - start_time) / 1e6
                 except socket.error:
-                    # If an error occurs while receiving the packet, set the
-                    # address and elapsed time as None
+                    # W przypadku pojawienia się błędu ustawienie adresu i czasu na None
                     curr_addr = None
                     elapsed_time = None
 
-                # Yield the current address and elapsed time
                 yield curr_addr, elapsed_time
 
-                # Break the loop if the destination address is reached
+                # Zakończenie pętli w momencie osiągnięcia adresu docelowego
                 if curr_addr == dest_addr:
                     break
     
