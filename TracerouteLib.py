@@ -69,7 +69,7 @@ class Traceroute(ICMPLib):
         )
         print("-" * 90)
 
-    def execute(self, dest_name):
+    def traceroute(self, dest_name):
         """
         Wywołuje odpowiednie funkcje i prezentuje ich wyniki w odpowiedni sposób.
         Przyjmuje adres docelowy jako argument.
