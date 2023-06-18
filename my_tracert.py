@@ -7,8 +7,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog='Traceroute',
         description='Traces route')
-    parser.add_argument('dest_name', help='destination name')           # positional argument
-    parser.add_argument('-i', '--send_over_icmp',action='store_true', help='send over icmp flag')  # on/off flag   
+    parser.add_argument('dest_name', help='destination name')          
+    parser.add_argument('-i', '--send_over_icmp',action='store_true', help='send over icmp flag') 
     args = parser.parse_args()
     if args.send_over_icmp:
         print("Using ICMP echo request")
