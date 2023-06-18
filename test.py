@@ -1,6 +1,6 @@
 # script.py
 
-from Traceroute import Traceroute
+from TracerouteLib import Traceroute
 import argparse
 
 if __name__ == "__main__":
