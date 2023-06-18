@@ -1,6 +1,10 @@
 from TracerouteLib import Traceroute
 import argparse
 
+"""
+Program prezentujący działanie bibliotek związanych z tematem projektu.
+Obsługuje przyjmowanie argumentów z linii komend.
+"""
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog='Traceroute',
