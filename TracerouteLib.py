@@ -23,16 +23,16 @@ class Traceroute(ICMPLib):
             icmp_sock = stack.enter_context(self.getIcmpSocket())
 
             if not self.send_over_icmp:
-            # Stworznenie gniazda UDP do wysyłania pakietów
+            # stworznenie gniazda UDP do wysyłania pakietów
                 tx = stack.enter_context(
                     socket.socket(
                         socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP
                     )
                 )
 
-            # Iterowanie po wartościach pola TTL
+            # iterowanie po wartościach pola TTL
             for ttl in range(1, self.MAX_HOPS + 1):
-                # Ustawianie wartości pola TTL w zależności od wybranego protokołu
+                # ustawianie wartości pola TTL w zależności od wybranego protokołu
                 if self.send_over_icmp:
                     self.setSockTTl(icmp_sock, ttl)
                     self.sendEchoRequest(icmp_sock, dest_addr)
@@ -40,7 +40,7 @@ class Traceroute(ICMPLib):
                     tx.setsockopt(socket.IPPROTO_IP, socket.IP_TTL, ttl)
                     tx.sendto(b"", (dest_addr, 33434))
 
-                # Obliczanie czasu dla węzła i wyciąganie adresu źródłowego z otrzymanego pakietu
+                # obliczanie czasu dla węzła i wyciąganie adresu źródłowego z otrzymanego pakietu
                 try:
                     start_time = time.perf_counter_ns()
 
@@ -50,19 +50,19 @@ class Traceroute(ICMPLib):
                     end_time = time.perf_counter_ns()
                     elapsed_time = (end_time - start_time) / 1e6
                 except socket.error:
-                    # W przypadku pojawienia się błędu ustawienie adresu i czasu na None
+                    # w przypadku pojawienia się błędu ustawienie adresu i czasu na None
                     curr_addr = None
                     elapsed_time = None
 
                 yield curr_addr, elapsed_time
 
-                # Zakończenie pętli w momencie osiągnięcia adresu docelowego
+                # zakończenie pętli w momencie osiągnięcia adresu docelowego
                 if curr_addr == dest_addr:
                     break
     
     def printHeader(self, dest_addr, dest_name):
         """
-        Wypisuje nagłówek programu
+        Wypisuje nagłówek programu.
         """
         print(f"Traceroute to {dest_name} ({dest_addr})")
         print(
@@ -80,14 +80,13 @@ class Traceroute(ICMPLib):
         for i, (addr, elapsed_time) in enumerate(self.tracerouteUtil(dest_addr)):
             if addr is not None:
                 try:
-                    # Get the hostname corresponding to the IP address
                     host = socket.gethostbyaddr(addr)[0]
                 except socket.error:
                     host = ""
-                # Print the hop information
+                # wypisanie informacji związanej z węzłem
                 print(
                     f"{i+1:<5d}{addr:<20s}{host:<50s}{elapsed_time:<10.3f} ms"
                 )
             else:
-                # Print "*" for hops with no response
+                # pusty wiersz w przypadku braku odpowiedzi
                 print(f"{i+1:<5d}{'*':<20s}{'*':<50s}{'*':<10s}")
