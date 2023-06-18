@@ -1,5 +1,3 @@
-# script.py
-
 from TracerouteLib import Traceroute
 import argparse
 
